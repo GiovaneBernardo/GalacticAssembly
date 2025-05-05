@@ -1,0 +1,357 @@
+{
+    "value0": {
+        "mAssetUuid": 847110476982174701,
+        "mAssetName": "gameScene.plzscn",
+        "mainSceneEntityUuid": 1,
+        "entities": [
+            {
+                "key": 1,
+                "value": {
+                    "uuid": 1,
+                    "parentUuid": 1,
+                    "prefabUuid": 0,
+                    "equivalentPrefabUuid": 0,
+                    "childrenUuid": [
+                        2,
+                        3
+                    ],
+                    "name": "Scene",
+                    "mComponentMask": {
+                        "value0": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+                    }
+                }
+            },
+            {
+                "key": 2,
+                "value": {
+                    "uuid": 2,
+                    "parentUuid": 1,
+                    "prefabUuid": 0,
+                    "equivalentPrefabUuid": 0,
+                    "childrenUuid": [],
+                    "name": "Sphere",
+                    "mComponentMask": {
+                        "value0": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111"
+                    }
+                }
+            },
+            {
+                "key": 3,
+                "value": {
+                    "uuid": 3,
+                    "parentUuid": 1,
+                    "prefabUuid": 0,
+                    "equivalentPrefabUuid": 0,
+                    "childrenUuid": [
+                        4
+                    ],
+                    "name": "PlayerEntity",
+                    "mComponentMask": {
+                        "value0": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111"
+                    }
+                }
+            },
+            {
+                "key": 4,
+                "value": {
+                    "uuid": 4,
+                    "parentUuid": 3,
+                    "prefabUuid": 0,
+                    "equivalentPrefabUuid": 0,
+                    "childrenUuid": [],
+                    "name": "CameraEntity",
+                    "mComponentMask": {
+                        "value0": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+                    }
+                }
+            }
+        ],
+        "value0": 3,
+        "value1": true,
+        "value2": {
+            "mSize": 5,
+            "mCapacity": 262144,
+            "mElementSize": 200,
+            "mComponentMask": 0,
+            "mComponentRawNameHash": 5263496530276493166,
+            "mSparseMap": [
+                {
+                    "key": 0,
+                    "value": 0
+                },
+                {
+                    "key": 1,
+                    "value": 1
+                },
+                {
+                    "key": 2,
+                    "value": 2
+                },
+                {
+                    "key": 3,
+                    "value": 3
+                },
+                {
+                    "key": 4,
+                    "value": 4
+                }
+            ],
+            "mData": [
+                {
+                    "polymorphic_id": 0
+                },
+                {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "Plaza::TransformComponent",
+                    "ptr_wrapper": {
+                        "id": 2147483649,
+                        "data": {
+                            "value0": {
+                                "mUuid": 1,
+                                "mEnabled": true
+                            },
+                            "mLocalPosition": {
+                                "value0": 0.0,
+                                "value1": 0.0,
+                                "value2": 0.0
+                            },
+                            "mLocalRotation": {
+                                "value0": 0.0,
+                                "value1": 0.0,
+                                "value2": 0.0,
+                                "value3": 0.0
+                            },
+                            "mLocalScale": {
+                                "value0": 1.0,
+                                "value1": 1.0,
+                                "value2": 1.0
+                            }
+                        }
+                    }
+                },
+                {
+                    "polymorphic_id": 1,
+                    "ptr_wrapper": {
+                        "id": 2147483650,
+                        "data": {
+                            "value0": {
+                                "mUuid": 2,
+                                "mEnabled": true
+                            },
+                            "mLocalPosition": {
+                                "value0": 0.0,
+                                "value1": 0.0,
+                                "value2": 0.0
+                            },
+                            "mLocalRotation": {
+                                "value0": 0.0,
+                                "value1": 0.0,
+                                "value2": 0.0,
+                                "value3": 0.0
+                            },
+                            "mLocalScale": {
+                                "value0": 1.0,
+                                "value1": 1.0,
+                                "value2": 1.0
+                            }
+                        }
+                    }
+                },
+                {
+                    "polymorphic_id": 1,
+                    "ptr_wrapper": {
+                        "id": 2147483651,
+                        "data": {
+                            "value0": {
+                                "mUuid": 3,
+                                "mEnabled": true
+                            },
+                            "mLocalPosition": {
+                                "value0": 0.0,
+                                "value1": 0.0,
+                                "value2": 0.0
+                            },
+                            "mLocalRotation": {
+                                "value0": 0.0,
+                                "value1": 0.0,
+                                "value2": 0.0,
+                                "value3": 0.0
+                            },
+                            "mLocalScale": {
+                                "value0": 1.0,
+                                "value1": 1.0,
+                                "value2": 1.0
+                            }
+                        }
+                    }
+                },
+                {
+                    "polymorphic_id": 1,
+                    "ptr_wrapper": {
+                        "id": 2147483652,
+                        "data": {
+                            "value0": {
+                                "mUuid": 4,
+                                "mEnabled": true
+                            },
+                            "mLocalPosition": {
+                                "value0": 0.0,
+                                "value1": 0.0,
+                                "value2": 0.0
+                            },
+                            "mLocalRotation": {
+                                "value0": 0.0,
+                                "value1": 0.0,
+                                "value2": 0.0,
+                                "value3": 0.0
+                            },
+                            "mLocalScale": {
+                                "value0": 1.0,
+                                "value1": 1.0,
+                                "value2": 1.0
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "value3": true,
+        "value4": {
+            "mSize": 3,
+            "mCapacity": 262144,
+            "mElementSize": 168,
+            "mComponentMask": 1,
+            "mComponentRawNameHash": 6482105481560533987,
+            "mSparseMap": [
+                {
+                    "key": 0,
+                    "value": 0
+                },
+                {
+                    "key": 2,
+                    "value": 1
+                },
+                {
+                    "key": 3,
+                    "value": 2
+                }
+            ],
+            "mData": [
+                {
+                    "polymorphic_id": 0
+                },
+                {
+                    "polymorphic_id": 2147483650,
+                    "polymorphic_name": "Plaza::MeshRenderer",
+                    "ptr_wrapper": {
+                        "id": 2147483653,
+                        "data": {
+                            "value0": {
+                                "mUuid": 2,
+                                "mEnabled": true
+                            },
+                            "castShadows": true,
+                            "mMeshUuid": 2,
+                            "mMaterialsUuids": [
+                                0
+                            ]
+                        }
+                    }
+                },
+                {
+                    "polymorphic_id": 2,
+                    "ptr_wrapper": {
+                        "id": 2147483654,
+                        "data": {
+                            "value0": {
+                                "mUuid": 3,
+                                "mEnabled": true
+                            },
+                            "castShadows": true,
+                            "mMeshUuid": 1,
+                            "mMaterialsUuids": [
+                                0
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "value5": true,
+        "value6": {
+            "mSize": 3,
+            "mCapacity": 262144,
+            "mElementSize": 112,
+            "mComponentMask": 2,
+            "mComponentRawNameHash": 11074389286998830421,
+            "mSparseMap": [
+                {
+                    "key": 0,
+                    "value": 0
+                },
+                {
+                    "key": 2,
+                    "value": 1
+                },
+                {
+                    "key": 3,
+                    "value": 2
+                }
+            ],
+            "mData": [
+                {
+                    "polymorphic_id": 0
+                },
+                {
+                    "polymorphic_id": 2147483651,
+                    "polymorphic_name": "Plaza::Collider",
+                    "ptr_wrapper": {
+                        "id": 2147483655,
+                        "data": {
+                            "value0": {
+                                "mUuid": 2,
+                                "mEnabled": true
+                            },
+                            "value1": false,
+                            "value2": [
+                                {
+                                    "ptr_wrapper": {
+                                        "id": 2147483656,
+                                        "data": {
+                                            "mEnum": 1,
+                                            "mMeshUuid": 0
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "polymorphic_id": 3,
+                    "ptr_wrapper": {
+                        "id": 2147483657,
+                        "data": {
+                            "value0": {
+                                "mUuid": 3,
+                                "mEnabled": true
+                            },
+                            "value1": false,
+                            "value2": [
+                                {
+                                    "ptr_wrapper": {
+                                        "id": 2147483658,
+                                        "data": {
+                                            "mEnum": 0,
+                                            "mMeshUuid": 0
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

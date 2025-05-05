@@ -1,0 +1,10 @@
+/.git
+/.vs
+/out
+/lib
+/Binaries
+/Intermediates
+/bin
+/cmake-build-debug
+*.vcxproj
+/Assets/models
