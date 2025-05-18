@@ -11,7 +11,12 @@ namespace Plaza {
 		glm::vec3 mLinearVelocity = glm::vec3(0.0f);
 		glm::vec3 mAngularVelocity = glm::vec3(0.0f);
 
-		static inline std::map<uint64_t, BigPhysicalBodyScript*> mBigPhysicalBodies = std::map<uint64_t, BigPhysicalBodyScript*>();
+		//static std::mutex sMapMutex;
+		static inline std::map<uint64_t, BigPhysicalBodyScript*> sBigPhysicalBodies = std::map<uint64_t, BigPhysicalBodyScript*>();
+		static void AddValueToPhysicalBodies(uint64_t key, BigPhysicalBodyScript* script) {
+		//	sMapMutex.lock();
+			sBigPhysicalBodies.emplace(key, script);
+		}
 	private:
 	};
 	PL_REGISTER_SCRIPT(PhysicalBodyScript);

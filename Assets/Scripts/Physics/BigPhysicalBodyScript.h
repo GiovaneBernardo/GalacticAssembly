@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Octree.h"
 #include "Utils/Comparators.h"
 
 namespace Plaza {
@@ -15,10 +16,12 @@ namespace Plaza {
 			std::unordered_map<glm::ivec3, float, IVec3Comparator> mScalarField;
 		};
 
+		OctreeNode mRootOctreeNode;
+
 		std::unordered_map<glm::ivec3, Chunk, IVec3Comparator> mChunks;
 
 		float mRadius;
-		float mWeight;
+		double mWeight;
 		glm::vec3 mPosition;
 		glm::quat mRotation;
 		float maxResolution = 1.0f;

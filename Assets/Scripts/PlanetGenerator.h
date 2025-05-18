@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Octree.h"
 #include "Utils/Comparators.h"
 
 namespace Plaza {
@@ -10,28 +11,13 @@ namespace Plaza {
 	constexpr int MIN_NODE_SIZE = 32;
 	//constexpr float ROOT_VOXEL_SIZE = ROOT_SIZE / FIELD_RES;
 
-	typedef std::unordered_map<glm::ivec3, float, IVec3Comparator> ScalarField;
-
-	class OctreeNode {
-	public:
-		glm::vec3 origin;
-		float size;
-		std::array<std::unique_ptr<OctreeNode>, 8> children;
-		bool isLeaf = true;
-		ScalarField scalarField;
-
-		void SubDivide();
-		void Update(const glm::vec3& playerPosition, const float planetRadius);
-		bool IsCompletelyOutsideSphere(const glm::vec3& center, float radius);
-	};
-
 	class PlanetGenerator : public CppScript {
 	public:
 		int mGridSize = 64;
 		float mIsoLevel = 0.8f;
 		float mNoiseFrequency = 2.0f;
 		float mNoiseAmplitude = 2.7f;
-		float mMaxHeight = 10.0f;
+		float mMaxHeight = 15000.0f;
 		float mMinHeight = 0.0f;
 		int mScale = 1.0f;
 		glm::vec3 mCubicChunksSize = glm::vec3(256.0f, 256.0f, 256.0f);
