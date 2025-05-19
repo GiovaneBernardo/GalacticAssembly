@@ -14,7 +14,7 @@ namespace Plaza {
 	class PlanetGenerator : public CppScript {
 	public:
 		int mGridSize = 64;
-		float mIsoLevel = 0.8f;
+		float mIsoLevel = 0.25f;
 		float mNoiseFrequency = 2.0f;
 		float mNoiseAmplitude = 2.7f;
 		float mMaxHeight = 15000.0f;
@@ -38,10 +38,12 @@ namespace Plaza {
 		void SubdivideChunk(Scene* scene, const glm::ivec3& offset, int size, int depth, int maxDepth, PerlinNoise& perlin);
 		void GeneratePlanetChunks(Scene* scene, const int chunkSize, const int gridSize, const float isoLevel, const int scale);
 
+		static void UpdateNodeMesh(Scene* scene, OctreeNode* node);
+
 		static std::unordered_map<glm::ivec3, float, IVec3Comparator> GenerateChunkGrid(PerlinNoise& perlin, const glm::ivec3& chunkOffset, const int resolution, const int planetRadius, const int chunkSize, const float isoLevel, const float noiseFrequency, const float noiseAmplitude);
 	private:
 		Entity* GeneratePlanet(Scene* scene, const std::unordered_map<glm::ivec3, float, IVec3Comparator>& grid, const int gridSize, const float isoLevel);
-		Mesh* GenerateMesh(const std::unordered_map<glm::ivec3, float, IVec3Comparator>& grid, const glm::vec3& offset, const int gridSize, const float isoLevel, const float resolution, const glm::ivec3 chunkOffset);
+		static Mesh* GenerateMesh(const std::unordered_map<glm::ivec3, float, IVec3Comparator>& grid, const glm::vec3& offset, const int gridSize, const float isoLevel, const float resolution, const glm::ivec3 chunkOffset);
 		std::unordered_map<glm::ivec3, float, IVec3Comparator> GenerateGrid(const int gridSize, const float isoLevel, const float noiseFrequency, const float noiseAmplitude);
 	};
 	PL_REGISTER_SCRIPT(PlanetGenerator);

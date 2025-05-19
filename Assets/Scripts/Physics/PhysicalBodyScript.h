@@ -5,8 +5,9 @@
 namespace Plaza {
 	class PhysicalBodyScript : public CppScript {
 	public:
-		void OnStart(Scene* scene);
-		void OnUpdate(Scene* scene);
+		void OnStart(Scene* scene) override;
+		void OnUpdate(Scene* scene) override;
+		void OnCollide(Scene* scene, const RaycastHit hit) override;
 
 		glm::vec3 mLinearVelocity = glm::vec3(0.0f);
 		glm::vec3 mAngularVelocity = glm::vec3(0.0f);

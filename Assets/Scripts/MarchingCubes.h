@@ -314,7 +314,7 @@ namespace Plaza {
 			return finalDensity; // Scalar value for Marching Cubes
 		}
 
-		static void March(float voxelSize, float cornersScalar[8], float isoLevel, std::vector<glm::vec3>& vertices, std::vector<unsigned int>& indices, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& uvs, const glm::vec3& basePosition, int gridSize, float frequency, float maxHeight, float minHeight, bool flip) {
+		static void March(float voxelSize, float cornersScalar[8], float isoLevel, std::vector<glm::vec3>& vertices, std::vector<unsigned int>& indices, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& uvs, const glm::vec3& basePosition, int gridSize, bool flip) {
 			// Create a lookup index based on the 8 corners
 			int cubeIndex = 0;
 			if (cornersScalar[0] < isoLevel) cubeIndex |= 1;
