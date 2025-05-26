@@ -34,12 +34,32 @@ namespace Plaza {
 		if (node->isLeaf)
 			return node;
 
-		for (const auto& child : node->children) {
-			if (child) {
-				OctreeNode* result = TraverseRay(child.get(), rayOrigin, rayDirection);
-				if (result)
-					return result;
+		struct ChildHit {
+			OctreeNode* child;
+			float tmin;
+		};
+
+		std::vector<ChildHit> hits;
+		for (const auto& childPtr : node->children) {
+			if (!childPtr) continue;
+			OctreeNode* child = childPtr.get();
+
+			glm::vec3 childMin = child->origin - child->size * 0.5f;
+			glm::vec3 childMax = child->origin + child->size * 0.5f;
+			float childTmin;
+			if (RayIntersectsAABB(rayOrigin, rayDirection, childMin, childMax, childTmin)) {
+				hits.push_back({child, childTmin});
 			}
+		}
+
+		std::sort(hits.begin(), hits.end(), [](const ChildHit& a, const ChildHit& b) {
+			return a.tmin < b.tmin;
+		});
+
+		for (const auto& hit : hits) {
+			OctreeNode* result = TraverseRay(hit.child, rayOrigin, rayDirection);
+			if (result)
+				return result;
 		}
 
 		return nullptr;

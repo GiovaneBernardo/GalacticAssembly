@@ -4,7 +4,7 @@ The game is made in my own custom engine, Plaza Engine.
 ## Current Features
 - Marching Cubes
 - Octree for generating the scalar fields
-- Custom Physics + PhysX
+- Custom Physics + PhysX collisions
 
 ## Current state
-- Can generate big static planets, no noise yet, just round spheres
+- Can generate big and deformable round planets (no noise)

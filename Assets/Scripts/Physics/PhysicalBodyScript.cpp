@@ -17,7 +17,6 @@ namespace Plaza {
 			double softening = 1.0f;
 			float acceleration =
 				(6.67430e-11 * bigBody->mWeight * 50.00) / (distance * distance + softening * softening);
-			PL_CORE_INFO("Acceleration: {}", acceleration);
 			// Replace 1.0f / 60.0f by delta time
 			// -------------------------------------------------------------------------------------------------------------
 			this->mLinearVelocity += glm::normalize(direction) * (acceleration / 50.0f) * glm::vec3(1.0f / 60.0f);
@@ -35,7 +34,6 @@ namespace Plaza {
 		//	*scene->GetComponent<TransformComponent>(this->mEntityUuid), scene,
 		//	scene->GetComponent<TransformComponent>(this->mEntityUuid)->GetWorldPosition() + correctedVelocity);
 
-		PL_CORE_INFO("X: {} \n Y: {} \n Z: {}", mLinearVelocity.x, mLinearVelocity.y, mLinearVelocity.z);
 		// this->mLinearVelocity = glm::vec3(0.0f);
 		//  Reset the velocity if it is colliding with something
 		// RaycastHit hit;

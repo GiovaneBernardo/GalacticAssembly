@@ -1,4 +1,6 @@
 #include "PlanetGenerator.h"
+
+#include "Constants.h"
 #include "MarchingCubes.h"
 #include "Physics/PhysicalBodyScript.h"
 #include "Physics/BigPhysicalBodyScript.h"
@@ -22,7 +24,7 @@ namespace Plaza {
 
 	ScalarField PlanetGenerator::GenerateSphere(const glm::vec3& origin, float size, float planetRadius,
 												PerlinNoise& perlin) {
-		const int resolution = 33;
+		const int resolution = SCALAR_FIELD_SIZE + 1;
 		float voxelSize = size / (resolution - 1); // Adjusted to use resolution - 1
 		ScalarField field = ScalarField();
 
@@ -97,11 +99,12 @@ namespace Plaza {
 				}
 
 				Mesh* chunkMesh = GenerateMesh(node->scalarField, node->origin, node->size, mIsoLevel,
-											   node->size / 32.0f, node->origin);
+											   node->size / SCALAR_FIELD_SIZE, node->origin);
 
 				if (chunkMesh) {
 					std::lock_guard lock(mutex);
-					Entity* chunkEntity = scene->NewEntity("PlanetChunk " + std::to_string(node->size), mPlanetEntity);
+					std::string originString =  std::to_string(node->origin.x) + std::to_string(node->origin.y) + std::to_string(node->origin.z);
+					Entity* chunkEntity = scene->NewEntity("PlanetChunk " + std::to_string(node->size) + originString, mPlanetEntity);
 					node->entityUuid = chunkEntity->uuid;
 					ECS::TransformSystem::SetLocalPosition(*scene->GetComponent<TransformComponent>(chunkEntity->uuid),
 														   scene, node->origin - glm::vec3(node->size / 2.0f));
@@ -159,10 +162,9 @@ namespace Plaza {
 		if (grid.size() <= 0)
 			return nullptr;
 
-		int size = 33;
-		for (int x = 0; x < size - 1; ++x) {
-			for (int y = 0; y < size - 1; ++y) {
-				for (int z = 0; z < size - 1; ++z) {
+		for (int x = 0; x < SCALAR_FIELD_SIZE; ++x) {
+			for (int y = 0; y < SCALAR_FIELD_SIZE; ++y) {
+				for (int z = 0; z < SCALAR_FIELD_SIZE; ++z) {
 					float cube[8] = {grid.at({x, y, z}),
 									 grid.at({x + 1, y, z}),
 									 grid.at({x + 1, y, z + 1}),
@@ -188,7 +190,7 @@ namespace Plaza {
 
 	void PlanetGenerator::UpdateNodeMesh(Scene* scene, OctreeNode* node) {
 		Mesh* chunkMesh = GenerateMesh(node->scalarField, node->origin, node->size, 0.25f,
-							   node->size / 32.0f, node->origin);
+							   node->size / SCALAR_FIELD_SIZE, node->origin);
 
 		if (chunkMesh) {
 			MeshRenderer* meshRenderer = scene->GetComponent<MeshRenderer>(node->entityUuid);
@@ -241,7 +243,7 @@ namespace Plaza {
 		if (size == planetRadius)
 			inside = true;
 
-		float minSize = 32.0f;
+		float minSize = SCALAR_FIELD_SIZE;
 		if (inside && size > minSize) {
 			if (isLeaf)
 				SubDivide();

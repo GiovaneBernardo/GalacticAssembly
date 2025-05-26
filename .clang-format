@@ -1,0 +1,39 @@
+BasedOnStyle: Microsoft
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 120
+UseTab: Always
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: false
+  AfterStruct: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+  AfterClass: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: true
+  BeforeWhile: true
+  AfterControlStatement: Never
+
+
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignAfterOpenBracket: true
+AlignOperands: true
+AllowShortFunctionsOnASingleLine: true
+AllowShortBlocksOnASingleLine: false
+SpaceBeforeParens: ControlStatements
+SpacesInSquareBrackets: false
+PointerAlignment: Left
+KeepEmptyLinesAtTheStartOfBlocks: false
+SortIncludes: false
+SpacesBeforeTrailingComments: 1
+LambdaBodyIndentation: Signature
+IndentCaseLabels: true
+IndentGotoLabels: true
+NamespaceIndentation: All
