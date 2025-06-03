@@ -1,0 +1,167 @@
+{
+    "value0": {
+        "mAssetUuid": 12838615499745318660,
+        "mAssetName": "Grass",
+        "diffuse": {
+            "polymorphic_id": 2147483649,
+            "polymorphic_name": "Plaza::VulkanTexture",
+            "ptr_wrapper": {
+                "id": 2147483649,
+                "data": {
+                    "value0": {
+                        "mAssetUuid": 4257135247886685936,
+                        "mAssetName": ""
+                    },
+                    "rgba": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0,
+                        "value3": 1.0
+                    },
+                    "mIntensity": 1.0,
+                    "mResolution": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0
+                    },
+                    "mMipCount": 12,
+                    "mTextureInfoUuid": 7230982189364593555
+                }
+            }
+        },
+        "normal": {
+            "polymorphic_id": 1,
+            "ptr_wrapper": {
+                "id": 2147483650,
+                "data": {
+                    "value0": {
+                        "mAssetUuid": 10862992154705656285,
+                        "mAssetName": ""
+                    },
+                    "rgba": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0,
+                        "value3": 1.0
+                    },
+                    "mIntensity": 1.0,
+                    "mResolution": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0
+                    },
+                    "mMipCount": 12,
+                    "mTextureInfoUuid": 7230982189364593555
+                }
+            }
+        },
+        "metalness": {
+            "polymorphic_id": 1073741824,
+            "ptr_wrapper": {
+                "id": 2147483651,
+                "data": {
+                    "value0": {
+                        "mAssetUuid": 0,
+                        "mAssetName": ""
+                    },
+                    "rgba": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0,
+                        "value3": 1.0
+                    },
+                    "mIntensity": 0.15000000596046449,
+                    "mResolution": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0
+                    },
+                    "mMipCount": 1,
+                    "mTextureInfoUuid": 825522245774493088
+                }
+            }
+        },
+        "roughness": {
+            "polymorphic_id": 1,
+            "ptr_wrapper": {
+                "id": 2147483652,
+                "data": {
+                    "value0": {
+                        "mAssetUuid": 9457402023928812492,
+                        "mAssetName": ""
+                    },
+                    "rgba": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0,
+                        "value3": 1.0
+                    },
+                    "mIntensity": 1.0,
+                    "mResolution": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0
+                    },
+                    "mMipCount": 12,
+                    "mTextureInfoUuid": 7230982189364593555
+                }
+            }
+        },
+        "height": {
+            "polymorphic_id": 1073741824,
+            "ptr_wrapper": {
+                "id": 2147483653,
+                "data": {
+                    "value0": {
+                        "mAssetUuid": 0,
+                        "mAssetName": ""
+                    },
+                    "rgba": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0,
+                        "value3": 1.0
+                    },
+                    "mIntensity": 1.0,
+                    "mResolution": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0
+                    },
+                    "mMipCount": 1,
+                    "mTextureInfoUuid": 825522245774493088
+                }
+            }
+        },
+        "aoMap": {
+            "polymorphic_id": 1073741824,
+            "ptr_wrapper": {
+                "id": 2147483654,
+                "data": {
+                    "value0": {
+                        "mAssetUuid": 0,
+                        "mAssetName": ""
+                    },
+                    "rgba": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0,
+                        "value3": 1.0
+                    },
+                    "mIntensity": 1.0,
+                    "mResolution": {
+                        "value0": 1.0,
+                        "value1": 1.0,
+                        "value2": 1.0
+                    },
+                    "mMipCount": 1,
+                    "mTextureInfoUuid": 825522245774493088
+                }
+            }
+        },
+        "flip": {
+            "value0": 1.0,
+            "value1": 1.0
+        }
+    }
+}
