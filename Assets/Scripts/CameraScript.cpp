@@ -44,8 +44,7 @@ namespace Plaza {
 
 		// Move Player
 		TransformComponent* cameraTransform = scene->GetComponent<TransformComponent>(cameraUuid);
-		glm::quat rotation;
-		rotation = playerTransform->GetWorldQuaternion();
+		glm::quat rotation = playerTransform->GetWorldQuaternion();
 		float dt = Time::GetDeltaTime();
 
 		if (Input::GetKeyDown(GLFW_KEY_W))
@@ -63,7 +62,7 @@ namespace Plaza {
 
 		if (mDampers && glm::distance(mVelocity, glm::vec3(0.0f)) == 0.0f) {
 			const glm::vec3& velocity = scene->GetComponent<RigidBody>(this->mEntityUuid)->GetVelocity();
-			mVelocity -= glm::normalize(scene->GetComponent<RigidBody>(this->mEntityUuid)->GetVelocity()) *
+			mVelocity -= glm::normalize(velocity) *
 						 glm::smoothstep(mMaxDeceleration, 0.0f, glm::distance(velocity, glm::vec3(0.0f))) * dt;
 		}
 
@@ -118,28 +117,216 @@ namespace Plaza {
 		ModifyTerrain(scene);
 	}
 
-	bool ModifyScalarFieldInRadius(ScalarField& field, glm::ivec3 pos, float radius, float strength, OctreeNode* node) {
-		bool modified = false;
-		for (int x = -radius; x <= radius; ++x) {
-			for (int y = -radius; y <= radius; ++y) {
-				for (int z = -radius; z <= radius; ++z) {
-					glm::ivec3 offset(x, y, z);
-					glm::ivec3 targetPos = pos + offset;
+	OctreeNode* FindLeafNodeAtPosition(OctreeNode* node, const glm::vec3& targetPos, float expectedSize, float epsilon = 0.001f) {
+		if (!node) return nullptr;
 
-					if (glm::length(glm::vec3(offset)) <= radius) {
-						auto it = node->scalarField.find(targetPos);
-						if (it != node->scalarField.end()) {
-							float dist = glm::length(glm::vec3(offset));
-							float falloff = 1.0f - (dist / radius);
-							it->second += strength * falloff;
-							modified = true;
-						}
+		glm::vec3 halfSizeVec = glm::vec3(node->size * 0.5f);
+		glm::vec3 min = glm::vec3(node->origin) - halfSizeVec;
+		glm::vec3 max = glm::vec3(node->origin) + halfSizeVec;
+
+		bool inside =
+			targetPos.x >= min.x - epsilon && targetPos.x <= max.x + epsilon &&
+			targetPos.y >= min.y - epsilon && targetPos.y <= max.y + epsilon &&
+			targetPos.z >= min.z - epsilon && targetPos.z <= max.z + epsilon;
+
+		if (!inside) return nullptr;
+
+		if (node->isLeaf) {
+			// Make sure it’s the same resolution
+			if (std::abs(node->size - expectedSize) < epsilon)
+				return node;
+			else
+				return nullptr;
+		}
+
+		for (auto& child : node->children) {
+			if (child) {
+				OctreeNode* found = FindLeafNodeAtPosition(child.get(), targetPos, expectedSize, epsilon);
+				if (found) return found;
+			}
+		}
+
+		return nullptr;
+	}
+
+	std::vector<OctreeNode*> GetNeighborNodes(OctreeNode* current, OctreeNode* root) {
+		std::vector<OctreeNode*> neighbors;
+
+		if (!current || !root) return neighbors;
+
+		const float epsilon = 0.001f;
+		const glm::vec3 origin = current->origin;
+		const float size = current->size;
+
+		// Directions to check neighbors in 6 faces
+		const glm::vec3 directions[] = {
+			{ size, 0.0f, 0.0f },  // +X
+			{-size, 0.0f, 0.0f },  // -X
+			{ 0.0f, size, 0.0f },  // +Y
+			{ 0.0f,-size, 0.0f },  // -Y
+			{ 0.0f, 0.0f, size },  // +Z
+			{ 0.0f, 0.0f,-size }   // -Z
+		};
+
+		for (const glm::vec3& dir : directions) {
+			glm::vec3 neighborCenter = origin + dir;
+
+			// Recursively find the leaf node at this position
+			OctreeNode* found = FindLeafNodeAtPosition(root, neighborCenter, size, epsilon);
+			if (found && found != current) {
+				neighbors.push_back(found);
+			}
+		}
+
+		return neighbors;
+	}
+
+	OctreeNode* GetNodeAtOffset(OctreeNode* node, const glm::ivec3& offsetDir, OctreeNode* root) {
+		if (!node || !root || glm::length(glm::vec3(offsetDir)) != 1.0f)
+			return nullptr; // Only support direct axis neighbors
+
+		constexpr float EPSILON = 0.01f;
+
+		// Compute neighbor origin
+		glm::vec3 neighborOrigin = glm::vec3(node->origin) + glm::vec3(offsetDir) * glm::vec3(node->size);
+
+		// Traverse from root to find node with matching origin and same size
+		std::function<OctreeNode*(OctreeNode*)> find = [&](OctreeNode* current) -> OctreeNode* {
+			if (!current) return nullptr;
+
+			float sizeDiff = fabs(current->size - node->size);
+			float dist = glm::distance(glm::vec3(current->origin), neighborOrigin);
+
+			if (sizeDiff < EPSILON && dist < EPSILON && current->isLeaf)
+				return current;
+
+			if (!current->isLeaf) {
+				for (auto& child : current->children) {
+					if (child) {
+						OctreeNode* found = find(child.get());
+						if (found) return found;
 					}
 				}
 			}
-		}
-		return modified;
+
+			return nullptr;
+		};
+
+		return find(root);
 	}
+
+	struct BorderUpdate {
+		OctreeNode* neighborNode;
+		glm::ivec3 neighborPos;
+		float newValue;
+	};
+
+	std::vector<BorderUpdate> deferredBorderUpdates;
+
+bool ModifyScalarFieldInRadius(ScalarField& field, glm::ivec3 pos, float radius, float strength, OctreeNode* node, uint64_t planetUuid) {
+    bool modified = false;
+
+    constexpr int RES = SCALAR_FIELD_SIZE; // 16 for a 17x17x17 field
+    glm::vec3 corner = glm::vec3(node->origin) - glm::vec3(node->size * 0.5f);
+    float voxelSize = node->size / static_cast<float>(RES);
+
+    for (int x = -static_cast<int>(radius); x <= static_cast<int>(radius); ++x) {
+        for (int y = -static_cast<int>(radius); y <= static_cast<int>(radius); ++y) {
+            for (int z = -static_cast<int>(radius); z <= static_cast<int>(radius); ++z) {
+                glm::ivec3 offset(x, y, z);
+                glm::ivec3 targetPos = pos + offset;
+
+                // Ensure targetPos is within bounds
+                if (targetPos.x < 0 || targetPos.x > RES ||
+                    targetPos.y < 0 || targetPos.y > RES ||
+                    targetPos.z < 0 || targetPos.z > RES)
+                    continue;
+
+                float dist = glm::length(glm::vec3(offset));
+                if (dist > radius)
+                    continue;
+
+                float falloff = 1.0f - (dist / radius);
+                float delta = strength * falloff;
+
+                // Modify the scalar field
+
+                modified = true;
+            	node->scalarField[targetPos] += delta;
+                // Check if it's a border voxel
+                bool onBorder =
+                    targetPos.x == 0 || targetPos.x == RES ||
+                    targetPos.y == 0 || targetPos.y == RES ||
+                    targetPos.z == 0 || targetPos.z == RES;
+
+            	bool outerBorder = targetPos.x == RES||
+targetPos.y == RES||
+targetPos.z == RES;
+            	if (!outerBorder) {
+            		//node->scalarField[targetPos] += delta;
+            	}
+//
+                //if (!onBorder)
+                //    continue;
+
+                // Compute world position at voxel center
+                glm::vec3 worldPos = corner + (glm::vec3(targetPos) + 0.5f) * voxelSize;
+
+                // Retrieve neighbor nodes
+                auto* root = &static_cast<BigPhysicalBodyScript*>(Scene::GetActiveScene()
+                    ->GetComponent<CppScriptComponent>(planetUuid)->mScripts[0])->mRootOctreeNode;
+
+            	auto applyToNeighbor = [&](glm::ivec3 offset, glm::ivec3 thisPos, glm::ivec3 neighborPos) {
+            		OctreeNode* neighbor = GetNodeAtOffset(node, offset, root);
+            		if (!neighbor) return;
+            		//neighbor->scalarField[neighborPos] += delta;
+            		//neighbor->scalarField[neighborPos] = node->scalarField[targetPos];
+            		deferredBorderUpdates.push_back({ neighbor, neighborPos, node->scalarField[targetPos] });
+            	};
+
+
+            	if (targetPos.x == 0) {
+            		//applyToNeighbor(glm::ivec3(-1, 0, 0), targetPos, glm::ivec3(RES, targetPos.y, targetPos.z));
+            	}
+            	if (targetPos.x == RES) {
+            		applyToNeighbor(glm::ivec3(1, 0, 0), targetPos, glm::ivec3(0, targetPos.y, targetPos.z));
+            	}
+
+            	if (targetPos.y == 0) {
+            		//applyToNeighbor(glm::ivec3(0, -1, 0), targetPos, glm::ivec3(targetPos.x, RES, targetPos.z));
+            	}
+            	if (targetPos.y == RES) {
+            		applyToNeighbor(glm::ivec3(0, 1, 0), targetPos, glm::ivec3(targetPos.x, 0, targetPos.z));
+            	}
+
+            	if (targetPos.z == 0) {
+            		//applyToNeighbor(glm::ivec3(0, 0, -1), targetPos, glm::ivec3(targetPos.x, targetPos.y, RES));
+            	}
+            	if (targetPos.z == RES) {
+            		applyToNeighbor(glm::ivec3(0, 0, 1), targetPos, glm::ivec3(targetPos.x, targetPos.y, 0));
+            	}
+                //std::vector<OctreeNode*> neighbors = GetNeighborNodes(node, root);
+                //for (OctreeNode* neighbor : neighbors) {
+                //    if (!neighbor) continue;
+//
+                //    glm::vec3 neighborCorner = neighbor->origin - glm::vec3(neighbor->size * 0.5f);
+                //    float neighborVoxelSize = neighbor->size / static_cast<float>(RES);
+//
+                //    // Convert world position to neighbor-local voxel index
+                //    glm::vec3 neighborLocal = (worldPos - neighborCorner) / neighborVoxelSize;
+                //    glm::ivec3 neighborPos = glm::floor(neighborLocal);
+//
+                //    // Clamp neighborPos to valid range
+                //    neighborPos = glm::clamp(neighborPos, glm::ivec3(0), glm::ivec3(RES));
+//
+                //    // Synchronize scalar field value
+                //    neighbor->scalarField[neighborPos] += delta * 0.25f;//node->scalarField[targetPos];
+                //}
+            }
+        }
+    }
+    return modified;
+}
 
 	void CollectIntersectingLeafNodes(
 	OctreeNode* node,
@@ -149,8 +336,8 @@ namespace Plaza {
 	{
 		if (!node) return;
 
-		glm::vec3 min = node->origin - glm::vec3(node->size * 0.5f);
-		glm::vec3 max = node->origin + glm::vec3(node->size * 0.5f);
+		glm::vec3 min = glm::vec3(node->origin) - glm::vec3(node->size * 0.5f);
+		glm::vec3 max = glm::vec3(node->origin) + glm::vec3(node->size * 0.5f);
 
 		// AABB-sphere intersection
 		float distSq = 0.0f;
@@ -229,7 +416,7 @@ namespace Plaza {
 				//glm::ivec3 scalarFieldPos = glm::ivec3(local * glm::vec3(32.0f / hitNode->size));
 				//glm::ivec3 scalarFieldPos = glm::ivec3(worldPosition - hitNode->origin + glm::vec3(hitNode->size / 2.0f));
 				constexpr int scalarResolution = SCALAR_FIELD_SIZE;
-				glm::vec3 corner = hitNode->origin - glm::vec3(hitNode->size * 0.5f);
+				glm::vec3 corner = glm::vec3(hitNode->origin) - glm::vec3(hitNode->size * 0.5f);
 				float voxelSize = hitNode->size / float(scalarResolution);
 
 				if (mShowDebugEntities) {
@@ -249,23 +436,35 @@ namespace Plaza {
 
 				// Modify the scalar field points inside radius
 				std::vector<OctreeNode*> affectedNodes;
+				//affectedNodes.push_back(hitNode);
 				CollectIntersectingLeafNodes(
 					&static_cast<BigPhysicalBodyScript*>(scene->GetComponent<CppScriptComponent>(planet->uuid)->mScripts[0])->mRootOctreeNode,
 					worldPosition,
 					mDigRadius,
 					affectedNodes);
 
+				std::vector<OctreeNode*> nodesToUpdate;
 				for (OctreeNode* node : affectedNodes) {
 					// Transform worldPos into this node scalar field space
-					glm::vec3 corner = node->origin - glm::vec3(node->size * 0.5f);
+					glm::vec3 corner = glm::vec3(node->origin) - glm::vec3(node->size * 0.5f);
 					float voxelSize = node->size / float(SCALAR_FIELD_SIZE);
 					glm::vec3 local = (worldPosition - corner) / voxelSize;
-					glm::ivec3 scalarFieldPos = glm::clamp(glm::ivec3(local), glm::ivec3(0), glm::ivec3(SCALAR_FIELD_SIZE - 1));
+					glm::ivec3 scalarFieldPos = glm::clamp(glm::ivec3(local), glm::ivec3(0), glm::ivec3(SCALAR_FIELD_SIZE));
 
-					bool modified = ModifyScalarFieldInRadius(node->scalarField, scalarFieldPos, mDigRadius, strength, node);
+					bool modified = ModifyScalarFieldInRadius(node->scalarField, scalarFieldPos, mDigRadius / (node->size / SCALAR_FIELD_SIZE), strength, node, planet->uuid);
+
 					if (modified) {
-						PlanetGenerator::UpdateNodeMesh(scene, node);
+						nodesToUpdate.push_back(node);
 					}
+				}
+
+				for (const auto& update : deferredBorderUpdates) {
+					update.neighborNode->scalarField[update.neighborPos] = update.newValue;
+				}
+				deferredBorderUpdates.clear();
+
+				for (OctreeNode* node : nodesToUpdate) {
+					PlanetGenerator::UpdateNodeMesh(scene, node);
 				}
 			}
 		}

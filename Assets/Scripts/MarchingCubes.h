@@ -314,7 +314,9 @@ namespace Plaza {
 			return finalDensity; // Scalar value for Marching Cubes
 		}
 
-		static void March(float voxelSize, float cornersScalar[8], float isoLevel, std::vector<glm::vec3>& vertices, std::vector<unsigned int>& indices, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& uvs, const glm::vec3& basePosition, int gridSize, bool flip) {
+		static void March(float voxelSize, float cornersScalar[8], float isoLevel, std::vector<glm::vec3>& vertices,
+			std::vector<unsigned int>& indices, std::vector<glm::vec3>& normals, std::vector<glm::vec2>& uvs,
+			std::vector<unsigned int>& materials, const glm::vec3& basePosition, int gridSize, bool flip) {
 			// Create a lookup index based on the 8 corners
 			int cubeIndex = 0;
 			if (cornersScalar[0] < isoLevel) cubeIndex |= 1;
@@ -392,6 +394,14 @@ namespace Plaza {
 				uvs.push_back(CalculateUV(v0, basePosition, gridSize));
 				uvs.push_back(CalculateUV(v1, basePosition, gridSize));
 				uvs.push_back(CalculateUV(v2, basePosition, gridSize));
+
+				float steepnessThreshold = 0.8f;
+				float dot = glm::dot(normal, glm::vec3(0, 1, 0));
+				unsigned int material = (dot < steepnessThreshold) ? 2 : 0;
+
+				materials.push_back(material);
+				materials.push_back(material);
+				materials.push_back(material);
 			}
 		}
 

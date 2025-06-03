@@ -14,14 +14,16 @@ namespace Plaza {
 	class PlanetGenerator : public CppScript {
 	public:
 		int mGridSize = 64;
-		float mIsoLevel = 0.25f;
-		float mNoiseFrequency = 2.0f;
-		float mNoiseAmplitude = 2.7f;
-		float mMaxHeight = 15000.0f;
+		float mIsoLevel = 0.0f;
+		float mNoiseFrequency = 0.0005f;
+		float mNoiseAmplitude = 0.1f;
+		float mMaxHeight = 250.0f;
 		float mMinHeight = 0.0f;
 		int mScale = 1.0f;
 		glm::vec3 mCubicChunksSize = glm::vec3(256.0f, 256.0f, 256.0f);
-		float mPlanetRadius = 1000.0f;
+		int mPlanetRadius = 1024;
+		bool mGenerateSmallestLOD;
+		std::vector<Material*> mMaterialsVector;
 
 		PerlinNoise mPerlin;
 
