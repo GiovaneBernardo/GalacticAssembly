@@ -77,7 +77,7 @@ namespace Plaza {
 
 		// Rotate Player
 		glm::vec2 mouseDelta = Input::Cursor::GetDeltaMousePosition();
-		float sensitivity = 0.2f * Time::GetDeltaTime();
+		float sensitivity = 0.001f; // 0.2f * Time::GetDeltaTime();
 		glm::quat currentPlayerRotation = playerTransform->GetLocalQuaternion();
 
 		if (mIsFlying) {

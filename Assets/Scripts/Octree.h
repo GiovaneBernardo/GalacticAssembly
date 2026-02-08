@@ -14,7 +14,11 @@ namespace Plaza {
         ScalarField scalarField;
     	uint64_t entityUuid;
 
-        void SubDivide();
+        virtual ~OctreeNode() = default;
+        OctreeNode() = default;
+        OctreeNode(OctreeNode&&) = default;
+        OctreeNode& operator=(OctreeNode&&) = default;
+        virtual void SubDivide();
         void Update(const glm::vec3& playerPosition, const float planetRadius, const bool generateSmallestLOD);
         bool IsCompletelyOutsideSphere(const glm::vec3& center, float radius);
 

@@ -32,8 +32,9 @@ namespace Plaza {
 		if (!node)
 			return nullptr;
 
-		glm::vec3 min = glm::vec3(node->origin) - node->size * 0.5f;
-		glm::vec3 max = glm::vec3(node->origin) + node->size * 0.5f;
+		float halfSize = node->size * 0.5f;
+		glm::vec3 min = glm::vec3(node->origin) - glm::vec3(halfSize);
+		glm::vec3 max = glm::vec3(node->origin) + glm::vec3(halfSize);
 		float tmin;
 		if (!RayIntersectsAABB(rayOrigin, rayDirection, min, max, tmin))
 			return nullptr;
@@ -52,8 +53,9 @@ namespace Plaza {
 				continue;
 			OctreeNode* child = childPtr.get();
 
-			glm::vec3 childMin = glm::vec3(child->origin) - child->size * 0.5f;
-			glm::vec3 childMax = glm::vec3(child->origin) + child->size * 0.5f;
+			float childHalfSize = child->size * 0.5f;
+			glm::vec3 childMin = glm::vec3(child->origin) - glm::vec3(childHalfSize);
+			glm::vec3 childMax = glm::vec3(child->origin) + glm::vec3(childHalfSize);
 			float childTmin;
 			if (RayIntersectsAABB(rayOrigin, rayDirection, childMin, childMax, childTmin)) {
 				hits.push_back({child, childTmin});

@@ -10,11 +10,11 @@ namespace Plaza {
 		static  std::mt19937 gen2(rd2());
 		static  std::uniform_real_distribution<> dis2(-1.0, 1.0);
 		static  std::uniform_real_distribution<> dis3(0.0, 1.0);
-		static  std::uniform_real_distribution<> dis4(3.0, 10.0);
-		static  std::uniform_real_distribution<> dis5(0.0, 5.0);
+		static  std::uniform_real_distribution<> dis4(1.0, 4.0);
+		static  std::uniform_real_distribution<> dis5(0.0, 3.0);
 
 		for (int i = 0; i < 128; ++i) {
-			Entity* newLight = Scene::GetActiveScene()->GetEntity(ECS::EntitySystem::Instantiate(scene, CppHelper::FindEntity("LightInstance")->uuid));
+			Entity* newLight = Scene::GetActiveScene()->GetEntity(ECS::EntitySystem::Instantiate(scene, this->mEntityUuid));
 			mLights.push_back(LightTransform(scene->GetComponent<TransformComponent>(newLight->uuid), glm::vec3(dis2(gen2), dis2(gen2), dis2(gen2)), dis5(gen2) + 1));
 			scene->GetComponent<Light>(newLight->uuid)->color = glm::vec3(dis3(gen2), dis3(gen2), dis3(gen2));
 			scene->GetComponent<Light>(newLight->uuid)->radius = dis4(gen2);
@@ -41,7 +41,7 @@ namespace Plaza {
 			//if (!IsInside(mPoint0, mPoint1, lightTransform.mTransform->GetWorldPosition())) {
 			//	lightTransform.mMovingDirection = glm::normalize(-lightTransform.mMovingDirection + glm::vec3(dis(gen), dis(gen), dis(gen)));
 			//}
-
+			lightTransform.mSpeed = 0.04f;
 			ECS::TransformSystem::SetLocalPosition(*lightTransform.mTransform, scene, lightTransform.mTransform->GetWorldPosition() + lightTransform.mMovingDirection * Time::GetDeltaTime() * lightTransform.mSpeed);
 		}
 	}
