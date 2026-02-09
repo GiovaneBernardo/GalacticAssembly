@@ -1,11 +1,11 @@
 #pragma once
 #include "pch.h"
-#include "Octree.h"
 #include "Utils/Comparators.h"
+#include "Octree.h"
 
 namespace Plaza {
 	class BigPhysicalBodyScript : public CppScript {
-	public:
+	  public:
 		void OnStart(Scene* scene);
 		void OnUpdate(Scene* scene);
 
@@ -16,7 +16,7 @@ namespace Plaza {
 			std::unordered_map<glm::ivec3, float, IVec3Comparator> mScalarField;
 		};
 
-		OctreeNode mRootOctreeNode;
+		PlanetOctreeNode mRootOctreeNode;
 
 		std::unordered_map<glm::ivec3, Chunk, IVec3Comparator> mChunks;
 
@@ -28,7 +28,9 @@ namespace Plaza {
 		float minResolution = 8.0f;
 
 		float mGravitationalAcceleration = 9.81f;
-	private:
+
+	  private:
+		void DrawOctreeNode(const PlanetOctreeNode& node, const glm::vec3& parentOrigin, float parentSize);
 	};
 	PL_REGISTER_SCRIPT(BigPhysicalBodyScript);
-}
+} // namespace Plaza

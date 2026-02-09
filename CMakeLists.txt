@@ -13,7 +13,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX- /W4 /O2")
     add_compile_options(/bigobj)
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "Embedded")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif()
 
 set(BUILD_STATIC_LIB ON)
@@ -31,7 +31,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Ob0 /Od /RTC1")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /C2220")
 set(PLAZA_ITERATOR_LEVEL 2)
-set(ENGINE_SOURCE_DIR "C:/Plaza/PlazaEngine")
+set(ENGINE_SOURCE_DIR "C:/Plaza/Dev/PlazaEngine")
 
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Assets/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/Scripts/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/Scripts/*.h")
 add_library(GameLib SHARED ${GAME_SOURCES})
@@ -45,6 +45,20 @@ target_link_options(GameLib PUBLIC "/INCREMENTAL /PDBALTPATH:$<TARGET_PDB_FILE_N
 link_directories("${CMAKE_SOURCE_DIR}/bin")
 
 set_property(TARGET GameLib PROPERTY CXX_STANDARD 20)
+
+file(GLOB_RECURSE ENGINE_SOURCES
+    "${ENGINE_SOURCE_DIR}/Core/*.cpp"
+    "${ENGINE_SOURCE_DIR}/Core/*.h"
+    "${ENGINE_SOURCE_DIR}/Modules/*.cpp"
+    "${ENGINE_SOURCE_DIR}/Modules/*.h"
+)
+
+target_sources(GameLib PRIVATE ${ENGINE_SOURCES})
+
+target_include_directories(GameLib PRIVATE
+    "${ENGINE_SOURCE_DIR}/Core"
+    "${ENGINE_SOURCE_DIR}/Modules"
+)
 
 include(FetchContent)
 FetchContent_Declare(
